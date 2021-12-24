@@ -53,3 +53,4 @@ python nenga_csv_to_pdf.py --layout
 * ここのコードをもとに作成しました。ありがたや。これがなければ、もう1日くらいかかっていそう  
 https://github.com/satemochi/saaaaah/blob/master/misc/new_year_card/write_address.py 
 * 恥ずかしコード、リファクタリングすれば半分くらいのコードになりそう
+* mac で open address.pdf をして確認してみたら、縦棒のパイプが￤になっていて残念、フォントが違う？
