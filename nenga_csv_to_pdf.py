@@ -32,6 +32,57 @@ def draw_image(pdf: canvas.Canvas):
     pdf.drawInlineImage(image, 2, 0, width=10 * cm, height=14.8 * cm)
 
 
+def draw_zipcode(pdf: canvas.Canvas, zipcode):
+    """
+    郵便番号
+    """
+    # 文字サイズ
+    ZIP_CODE_FONT_SIZE = 15
+    # 文字間隔（パディング）
+    ZIP_CODE_FONT_PADDING = 24
+    # 文字間隔（マージン）
+    ZIP_CODE_FONT_MARGIN = 0.17 * cm
+
+    if "-" in zipcode:
+        zipcode = zipcode.replace('-', '')
+
+    pdf.setFont('IPAexg', ZIP_CODE_FONT_SIZE)
+    width_char = getFont('IPAexg').stringWidth(
+        zipcode[0], ZIP_CODE_FONT_PADDING) + ZIP_CODE_FONT_MARGIN
+    for i, c in enumerate(zipcode):
+        x = 4.6 * cm + width_char * i
+        y = 13 * cm
+        pdf.drawString(x, y, c)
+
+
+def draw_zipcode_owner(pdf: canvas.Canvas, zipcode):
+    """
+    送り元郵便番号
+    """
+    # 文字サイズ
+    _ZIP_CODE_FONT_SIZE = 13
+    # 文字間隔（パディング）
+    _ZIP_CODE_FONT_PADDING = 10
+    # 文字間隔（マージン）
+    _ZIP_CODE_FONT_MARGIN = 0.17 * cm
+
+    if "-" in zipcode:
+        zipcode = zipcode.replace('-', '')
+
+    pdf.setFont('IPAexg', _ZIP_CODE_FONT_SIZE)
+    _width_char = getFont('IPAexg').stringWidth(
+        zipcode[0], _ZIP_CODE_FONT_PADDING) + _ZIP_CODE_FONT_MARGIN
+
+    for i, c in enumerate(zipcode):
+        # 微調整
+        if i > 2:
+            x = 0.81 * cm + _width_char * i
+        else:
+            x = 0.66 * cm + _width_char * i
+        y = 2 * cm
+        pdf.drawString(x, y, c)
+
+
 def draw_send_name(pdf: canvas.Canvas, df_send_name: DataFrame):
     """
     宛先の氏名（連名にも対応）
@@ -100,7 +151,7 @@ def draw_name_owner(pdf: canvas.Canvas, names: DataFrame):
     送り元氏名（連名にも対応）
     """
     # 文字サイズ
-    SEND_ADDRES_1_FONT_SIZE = 9
+    SEND_ADDRES_1_FONT_SIZE = 9.5
 
     pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
@@ -127,57 +178,6 @@ def draw_name_owner(pdf: canvas.Canvas, names: DataFrame):
         for i, c in enumerate(name):
             y = base_y - MARGIN * i
             pdf.drawString(x, y, c)
-
-
-def draw_zipcode(pdf: canvas.Canvas, zipcode):
-    """
-    郵便番号
-    """
-    # 文字サイズ
-    ZIP_CODE_FONT_SIZE = 15
-    # 文字間隔（パディング）
-    ZIP_CODE_FONT_PADDING = 24
-    # 文字間隔（マージン）
-    ZIP_CODE_FONT_MARGIN = 0.15 * cm
-
-    if "-" in zipcode:
-        zipcode = zipcode.replace('-', '')
-
-    pdf.setFont('IPAexg', ZIP_CODE_FONT_SIZE)
-    width_char = getFont('IPAexg').stringWidth(
-        zipcode[0], ZIP_CODE_FONT_PADDING) + ZIP_CODE_FONT_MARGIN
-    for i, c in enumerate(zipcode):
-        x = 4.53 * cm + width_char * i
-        y = 13 * cm
-        pdf.drawString(x, y, c)
-
-
-def draw_zipcode_owner(pdf: canvas.Canvas, zipcode):
-    """
-    送り元郵便番号
-    """
-    # 文字サイズ
-    _ZIP_CODE_FONT_SIZE = 13
-    # 文字間隔（パディング）
-    _ZIP_CODE_FONT_PADDING = 10
-    # 文字間隔（マージン）
-    _ZIP_CODE_FONT_MARGIN = 0.15 * cm
-
-    if "-" in zipcode:
-        zipcode = zipcode.replace('-', '')
-
-    pdf.setFont('IPAexg', _ZIP_CODE_FONT_SIZE)
-    _width_char = getFont('IPAexg').stringWidth(
-        zipcode[0], _ZIP_CODE_FONT_PADDING) + _ZIP_CODE_FONT_MARGIN
-
-    for i, c in enumerate(zipcode):
-        # 微調整
-        if i > 2:
-            x = 0.81 * cm + _width_char * i
-        else:
-            x = 0.66 * cm + _width_char * i
-        y = 2 * cm
-        pdf.drawString(x, y, c)
 
 
 def edit_address(address: List):
@@ -215,15 +215,15 @@ def draw_send_address(pdf: canvas.Canvas, address: List):
     pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
     for addr_i, addr_word in enumerate(address):
-        addr_x = 8.9 * cm - 0.6 * cm * addr_i
+        addr_x = 8.7 * cm - 0.6 * cm * addr_i
 
         for i, c in enumerate(addr_word):
-            y = 12.3 * cm - (0.5 * cm * i)
+            y = 12 * cm - (0.5 * cm * i)
 
             # 住所の番地前後のハイフンの文字サイズ変更
             if c in '-ー－':
                 pdf.setFont('IPAexm', 8)
-                pdf.drawString(addr_x + 6, y + 2, chinese_numeral(c))
+                pdf.drawString(addr_x+6, y+2, chinese_numeral(c))
             else:
                 pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
                 pdf.drawString(addr_x, y, chinese_numeral(c))
@@ -234,7 +234,7 @@ def draw_send_address_owner(pdf: canvas.Canvas, address: List):
     送り元住所
     """
     # 文字サイズ
-    SEND_ADDRES_1_FONT_SIZE = 10
+    SEND_ADDRES_1_FONT_SIZE = 10.5
 
     pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
@@ -247,10 +247,10 @@ def draw_send_address_owner(pdf: canvas.Canvas, address: List):
             # 住所の番地前後のハイフンの文字サイズ変更
             if c in '-ー－':
                 pdf.setFont('IPAexm', 6)
+                pdf.drawString(addr_x+5, y+2, chinese_numeral(c))
             else:
                 pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
-
-            pdf.drawString(addr_x, y, chinese_numeral(c))
+                pdf.drawString(addr_x, y, chinese_numeral(c))
 
 
 def chinese_numeral(s):
