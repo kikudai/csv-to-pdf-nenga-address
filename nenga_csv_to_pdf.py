@@ -7,13 +7,18 @@ from pandas.core.frame import DataFrame
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.pdfmetrics import getFont
-from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import cm
 
 
+# IPAexフォント
+IPA_EX_M_TTF = "./fonts/IPAexfont/ipaexm.ttf"
+IPA_EX_G_TTF = "./fonts/IPAexfont/ipaexg.ttf"
+
+
 def set_up(fname='address.pdf') -> canvas.Canvas:
-    pdfmetrics.registerFont(UnicodeCIDFont('HeiseiMin-W3', isVertical=True))
-    pdfmetrics.registerFont(UnicodeCIDFont('HeiseiKakuGo-W5'))
+    pdfmetrics.registerFont(TTFont('IPAexm', IPA_EX_M_TTF))
+    pdfmetrics.registerFont(TTFont('IPAexg', IPA_EX_G_TTF))
     pdf = canvas.Canvas(fname)
     pdf.setPageSize((10 * cm, 14.8 * cm))
     return pdf
@@ -34,7 +39,7 @@ def draw_send_name(pdf: canvas.Canvas, df_send_name: DataFrame):
     # 文字サイズ
     SEND_ADDRES_1_FONT_SIZE = 20
 
-    pdf.setFont('HeiseiMin-W3', SEND_ADDRES_1_FONT_SIZE)
+    pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
     base_y = 10.5 * cm
 
@@ -97,7 +102,7 @@ def draw_name_owner(pdf: canvas.Canvas, names: DataFrame):
     # 文字サイズ
     SEND_ADDRES_1_FONT_SIZE = 9
 
-    pdf.setFont('HeiseiMin-W3', SEND_ADDRES_1_FONT_SIZE)
+    pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
     base_y = 5.8 * cm
 
@@ -138,8 +143,8 @@ def draw_zipcode(pdf: canvas.Canvas, zipcode):
     if "-" in zipcode:
         zipcode = zipcode.replace('-', '')
 
-    pdf.setFont('HeiseiKakuGo-W5', ZIP_CODE_FONT_SIZE)
-    width_char = getFont('HeiseiKakuGo-W5').stringWidth(
+    pdf.setFont('IPAexg', ZIP_CODE_FONT_SIZE)
+    width_char = getFont('IPAexg').stringWidth(
         zipcode[0], ZIP_CODE_FONT_PADDING) + ZIP_CODE_FONT_MARGIN
     for i, c in enumerate(zipcode):
         x = 4.53 * cm + width_char * i
@@ -161,8 +166,8 @@ def draw_zipcode_owner(pdf: canvas.Canvas, zipcode):
     if "-" in zipcode:
         zipcode = zipcode.replace('-', '')
 
-    pdf.setFont('HeiseiKakuGo-W5', _ZIP_CODE_FONT_SIZE)
-    _width_char = getFont('HeiseiKakuGo-W5').stringWidth(
+    pdf.setFont('IPAexg', _ZIP_CODE_FONT_SIZE)
+    _width_char = getFont('IPAexg').stringWidth(
         zipcode[0], _ZIP_CODE_FONT_PADDING) + _ZIP_CODE_FONT_MARGIN
 
     for i, c in enumerate(zipcode):
@@ -207,7 +212,7 @@ def draw_send_address(pdf: canvas.Canvas, address: List):
     # 文字サイズ
     SEND_ADDRES_1_FONT_SIZE = 14
 
-    pdf.setFont('HeiseiMin-W3', SEND_ADDRES_1_FONT_SIZE)
+    pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
     for addr_i, addr_word in enumerate(address):
         addr_x = 8.9 * cm - 0.6 * cm * addr_i
@@ -217,11 +222,11 @@ def draw_send_address(pdf: canvas.Canvas, address: List):
 
             # 住所の番地前後のハイフンの文字サイズ変更
             if c in '-ー－':
-                pdf.setFont('HeiseiMin-W3', 8)
+                pdf.setFont('IPAexm', 8)
+                pdf.drawString(addr_x + 6, y + 2, chinese_numeral(c))
             else:
-                pdf.setFont('HeiseiMin-W3', SEND_ADDRES_1_FONT_SIZE)
-
-            pdf.drawString(addr_x, y, chinese_numeral(c))
+                pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
+                pdf.drawString(addr_x, y, chinese_numeral(c))
 
 
 def draw_send_address_owner(pdf: canvas.Canvas, address: List):
@@ -231,7 +236,7 @@ def draw_send_address_owner(pdf: canvas.Canvas, address: List):
     # 文字サイズ
     SEND_ADDRES_1_FONT_SIZE = 10
 
-    pdf.setFont('HeiseiMin-W3', SEND_ADDRES_1_FONT_SIZE)
+    pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
     for addr_i, addr_word in enumerate(address):
         addr_x = 2.8 * cm - 0.5 * cm * addr_i
@@ -241,9 +246,9 @@ def draw_send_address_owner(pdf: canvas.Canvas, address: List):
 
             # 住所の番地前後のハイフンの文字サイズ変更
             if c in '-ー－':
-                pdf.setFont('HeiseiMin-W3', 6)
+                pdf.setFont('IPAexm', 6)
             else:
-                pdf.setFont('HeiseiMin-W3', SEND_ADDRES_1_FONT_SIZE)
+                pdf.setFont('IPAexm', SEND_ADDRES_1_FONT_SIZE)
 
             pdf.drawString(addr_x, y, chinese_numeral(c))
 
