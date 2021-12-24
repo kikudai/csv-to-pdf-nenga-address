@@ -21,7 +21,7 @@ python nenga_csv_to_pdf.py
 
 ## 事前準備
 ### python のインストール
-* [Python環境構築ガイド - python.jp|https://www.python.jp/install/install.html] などを参考に python をインストール
+* [Python環境構築ガイド - python.jp](https://www.python.jp/install/install.html) などを参考に python をインストール
 
 ### コマンド実行環境構築
 ```
