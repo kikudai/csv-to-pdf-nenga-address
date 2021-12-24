@@ -17,7 +17,7 @@ python nenga_csv_to_pdf.py --layout
 python nenga_csv_to_pdf.py
 ```
 ## サンプル
-![sample_nenga](/sample_nanga.png)
+![sample_nenga](https://github.com/kikudai/csv-to-pdf-nenga-address/blob/main/sample_nenga.png)
 
 ## 事前準備
 ### python のインストール
