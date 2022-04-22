@@ -29,7 +29,7 @@ git clone https://github.com/kikudai/csv-to-pdf-nenga-address.git
 cd csv-to-pdf-nenga-address.git
 
 # ライブラリインストール
-pip install -r require
+pip install -r requirement.txt
 ```
 
 ### コマンド実行
