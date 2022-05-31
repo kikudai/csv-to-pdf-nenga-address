@@ -17,6 +17,9 @@ IPA_EX_G_TTF = "./fonts/IPAexfont/ipaexg.ttf"
 
 
 def set_up(fname='address.pdf') -> canvas.Canvas:
+    """
+    フォント設定とpdfのサイズを設定
+    """
     pdfmetrics.registerFont(TTFont('IPAexm', IPA_EX_M_TTF))
     pdfmetrics.registerFont(TTFont('IPAexg', IPA_EX_G_TTF))
     pdf = canvas.Canvas(fname)
@@ -26,7 +29,7 @@ def set_up(fname='address.pdf') -> canvas.Canvas:
 
 def draw_image(pdf: canvas.Canvas):
     """
-    画像
+    pdfの背景画像設置
     """
     image = Image.open('./layout_nenga.png')
     pdf.drawInlineImage(image, 2, 0, width=10 * cm, height=14.8 * cm)
@@ -34,7 +37,7 @@ def draw_image(pdf: canvas.Canvas):
 
 def draw_zipcode(pdf: canvas.Canvas, zipcode):
     """
-    郵便番号
+    郵便番号をpdfに配置する
     """
     # 文字サイズ
     ZIP_CODE_FONT_SIZE = 15
@@ -43,6 +46,7 @@ def draw_zipcode(pdf: canvas.Canvas, zipcode):
     # 文字間隔（マージン）
     ZIP_CODE_FONT_MARGIN = 0.17 * cm
 
+    # ハイフン付き郵便番号をハイフンなしにする（pdf上ハイフン表示が不要なため）
     if "-" in zipcode:
         zipcode = zipcode.replace('-', '')
 
