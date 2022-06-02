@@ -16,15 +16,17 @@ IPA_EX_M_TTF = "./fonts/IPAexfont/ipaexm.ttf"
 IPA_EX_G_TTF = "./fonts/IPAexfont/ipaexg.ttf"
 
 
-def set_up(fname='address.pdf') -> canvas.Canvas:
-    """
-    フォント設定とpdfのサイズを設定
-    """
-    pdfmetrics.registerFont(TTFont('IPAexm', IPA_EX_M_TTF))
-    pdfmetrics.registerFont(TTFont('IPAexg', IPA_EX_G_TTF))
-    pdf = canvas.Canvas(fname)
-    pdf.setPageSize((10 * cm, 14.8 * cm))
-    return pdf
+class NengaPdf:
+    """年賀状のPDFクラス"""    
+    def set_up(self, fname='address.pdf') -> canvas.Canvas:
+        """
+        フォント設定とpdfのサイズを設定
+        """
+        pdfmetrics.registerFont(TTFont('IPAexm', IPA_EX_M_TTF))
+        pdfmetrics.registerFont(TTFont('IPAexg', IPA_EX_G_TTF))
+        pdf = canvas.Canvas(fname)
+        pdf.setPageSize((10 * cm, 14.8 * cm))
+        return pdf
 
 
 def draw_image(pdf: canvas.Canvas):
@@ -285,7 +287,8 @@ if __name__ == '__main__':
     parser.add_argument("--layout", help="optional", action="store_true")
     args = parser.parse_args()
 
-    pdf = set_up()
+    nenga_pdf = NengaPdf()
+    pdf = nenga_pdf.set_up()
 
     df_send = pd.read_csv('address_list.csv').fillna('')
     df_owner = pd.read_csv('owner_info.csv').fillna('')
