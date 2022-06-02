@@ -27,38 +27,35 @@ class NengaPdf:
         pdf = canvas.Canvas(fname)
         pdf.setPageSize((10 * cm, 14.8 * cm))
         return pdf
-
-
-def draw_image(pdf: canvas.Canvas):
-    """
-    pdfの背景画像設置
-    """
-    image = Image.open('./layout_nenga.png')
-    pdf.drawInlineImage(image, 2, 0, width=10 * cm, height=14.8 * cm)
-
-
-def draw_zipcode(pdf: canvas.Canvas, zipcode):
-    """
-    郵便番号をpdfに配置する
-    """
-    # 文字サイズ
-    ZIP_CODE_FONT_SIZE = 15
-    # 文字間隔（パディング）
-    ZIP_CODE_FONT_PADDING = 24
-    # 文字間隔（マージン）
-    ZIP_CODE_FONT_MARGIN = 0.17 * cm
-
+    
+    def draw_image(pdf: canvas.Canvas):
+        """
+        pdfの背景画像設置
+        """
+        image = Image.open('./layout_nenga.png')
+        pdf.drawInlineImage(image, 2, 0, width=10 * cm, height=14.8 * cm)
+        
+    def draw_zipcode(pdf: canvas.Canvas, zipcode):
+        """
+        郵便番号をpdfに配置する
+        """
+        # 文字サイズ
+        ZIP_CODE_FONT_SIZE = 15
+        # 文字間隔（パディング）
+        ZIP_CODE_FONT_PADDING = 24
+        # 文字間隔（マージン）
+        ZIP_CODE_FONT_MARGIN = 0.17 * cm
     # ハイフン付き郵便番号をハイフンなしにする（pdf上ハイフン表示が不要なため）
-    if "-" in zipcode:
-        zipcode = zipcode.replace('-', '')
+        if "-" in zipcode:
+            zipcode = zipcode.replace('-', '')
 
-    pdf.setFont('IPAexg', ZIP_CODE_FONT_SIZE)
-    width_char = getFont('IPAexg').stringWidth(
-        zipcode[0], ZIP_CODE_FONT_PADDING) + ZIP_CODE_FONT_MARGIN
-    for i, c in enumerate(zipcode):
-        x = 4.6 * cm + width_char * i
-        y = 13 * cm
-        pdf.drawString(x, y, c)
+        pdf.setFont('IPAexg', ZIP_CODE_FONT_SIZE)
+        width_char = getFont('IPAexg').stringWidth(
+            zipcode[0], ZIP_CODE_FONT_PADDING) + ZIP_CODE_FONT_MARGIN
+        for i, c in enumerate(zipcode):
+            x = 4.6 * cm + width_char * i
+            y = 13 * cm
+            pdf.drawString(x, y, c)
 
 
 def draw_zipcode_owner(pdf: canvas.Canvas, zipcode):
