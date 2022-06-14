@@ -28,14 +28,14 @@ class NengaPdf:
         pdf.setPageSize((10 * cm, 14.8 * cm))
         return pdf
     
-    def draw_image(pdf: canvas.Canvas):
+    def draw_image(self, pdf: canvas.Canvas):
         """
         pdfの背景画像設置
         """
         image = Image.open('./layout_nenga.png')
         pdf.drawInlineImage(image, 2, 0, width=10 * cm, height=14.8 * cm)
         
-    def draw_zipcode(pdf: canvas.Canvas, zipcode):
+    def draw_zipcode(self, pdf: canvas.Canvas, zipcode):
         """
         郵便番号をpdfに配置する
         """
@@ -56,6 +56,8 @@ class NengaPdf:
             x = 4.6 * cm + width_char * i
             y = 13 * cm
             pdf.drawString(x, y, c)
+            
+n001 = NengaPdf()
 
 
 def draw_zipcode_owner(pdf: canvas.Canvas, zipcode):
@@ -314,7 +316,7 @@ if __name__ == '__main__':
     for i, row in df_send.iterrows():
         # 年賀状レイアウト出力
         if args.layout:
-            draw_image(pdf)
+            nenga_pdf.draw_image(pdf)
 
         # 送り先住所
         send_address = edit_address(
@@ -349,7 +351,7 @@ if __name__ == '__main__':
         df_send_name = df_send_name.replace("", np.nan)
         df_send_name = df_send_name.dropna(how='all', axis=0)
 
-        draw_zipcode(pdf, str(row['郵便番号(自宅欄)']))
+        nenga_pdf.draw_zipcode(pdf, str(row['郵便番号(自宅欄)']))
         draw_send_address(pdf, send_address)
         draw_send_name(pdf, df_send_name)
 
