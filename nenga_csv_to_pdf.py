@@ -16,17 +16,43 @@ IPA_EX_M_TTF = "./fonts/IPAexfont/ipaexm.ttf"
 IPA_EX_G_TTF = "./fonts/IPAexfont/ipaexg.ttf"
 
 
+def new_pdf(fname='address.pdf'):
+    """pdf Canvas作成"""
+    pdfmetrics.registerFont(TTFont('IPAexm', IPA_EX_M_TTF))
+    pdfmetrics.registerFont(TTFont('IPAexg', IPA_EX_G_TTF))
+    pdf = canvas.Canvas(fname)
+    pdf.setPageSize((10 * cm, 14.8 * cm))
+    return pdf
+
+
 class NengaPdf:
-    """年賀状のPDFクラス"""    
-    def set_up(self, fname='address.pdf') -> canvas.Canvas:
+    """年賀状のPDFクラス"""
+
+    def __init__(self, pdf: canvas.Canvas):
+        self.pdf = pdf
+
+    def draw_zipcode(self, zipcode: str):
         """
-        フォント設定とpdfのサイズを設定
+        郵便番号をpdfに配置する
         """
-        pdfmetrics.registerFont(TTFont('IPAexm', IPA_EX_M_TTF))
-        pdfmetrics.registerFont(TTFont('IPAexg', IPA_EX_G_TTF))
-        pdf = canvas.Canvas(fname)
-        pdf.setPageSize((10 * cm, 14.8 * cm))
-        return pdf
+        # 文字サイズ
+        ZIP_CODE_FONT_SIZE = 15
+        # 文字間隔（パディング）
+        ZIP_CODE_FONT_PADDING = 24
+        # 文字間隔（マージン）
+        ZIP_CODE_FONT_MARGIN = 0.17 * cm
+
+        # ハイフン付き郵便番号をハイフンなしにする（pdf上ハイフン表示が不要なため）
+        if "-" in zipcode:
+            zipcode = zipcode.replace('-', '')
+
+        self.pdf.setFont('IPAexg', ZIP_CODE_FONT_SIZE)
+        width_char = getFont('IPAexg').stringWidth(
+            zipcode[0], ZIP_CODE_FONT_PADDING) + ZIP_CODE_FONT_MARGIN
+        for i, c in enumerate(zipcode):
+            x = 4.6 * cm + width_char * i
+            y = 13 * cm
+            self.pdf.drawString(x, y, c)
 
 
 def draw_image(pdf: canvas.Canvas):
@@ -35,30 +61,6 @@ def draw_image(pdf: canvas.Canvas):
     """
     image = Image.open('./layout_nenga.png')
     pdf.drawInlineImage(image, 2, 0, width=10 * cm, height=14.8 * cm)
-
-
-def draw_zipcode(pdf: canvas.Canvas, zipcode):
-    """
-    郵便番号をpdfに配置する
-    """
-    # 文字サイズ
-    ZIP_CODE_FONT_SIZE = 15
-    # 文字間隔（パディング）
-    ZIP_CODE_FONT_PADDING = 24
-    # 文字間隔（マージン）
-    ZIP_CODE_FONT_MARGIN = 0.17 * cm
-
-    # ハイフン付き郵便番号をハイフンなしにする（pdf上ハイフン表示が不要なため）
-    if "-" in zipcode:
-        zipcode = zipcode.replace('-', '')
-
-    pdf.setFont('IPAexg', ZIP_CODE_FONT_SIZE)
-    width_char = getFont('IPAexg').stringWidth(
-        zipcode[0], ZIP_CODE_FONT_PADDING) + ZIP_CODE_FONT_MARGIN
-    for i, c in enumerate(zipcode):
-        x = 4.6 * cm + width_char * i
-        y = 13 * cm
-        pdf.drawString(x, y, c)
 
 
 def draw_zipcode_owner(pdf: canvas.Canvas, zipcode):
@@ -263,7 +265,7 @@ def chinese_numeral(s):
     convert_table = {ord(u'0'): u'〇', ord(u'1'): u'一', ord(u'2'): u'二',
                      ord(u'3'): u'三', ord(u'4'): u'四', ord(u'5'): u'五',
                      ord(u'6'): u'六', ord(u'7'): u'七', ord(u'8'): u'八',
-                     ord(u'9'): u'九', ord(u'-'): u'|', ord(u'－'): u'|', 
+                     ord(u'9'): u'九', ord(u'-'): u'|', ord(u'－'): u'|',
                      ord(u'ー'): u'|'}
     return s.translate(convert_table)
 
@@ -287,8 +289,7 @@ if __name__ == '__main__':
     parser.add_argument("--layout", help="optional", action="store_true")
     args = parser.parse_args()
 
-    nenga_pdf = NengaPdf()
-    pdf = nenga_pdf.set_up()
+    nenga_pdf = NengaPdf(new_pdf())
 
     df_send = pd.read_csv('address_list.csv').fillna('')
     df_owner = pd.read_csv('owner_info.csv').fillna('')
@@ -317,7 +318,7 @@ if __name__ == '__main__':
     for i, row in df_send.iterrows():
         # 年賀状レイアウト出力
         if args.layout:
-            draw_image(pdf)
+            draw_image(nenga_pdf)
 
         # 送り先住所
         send_address = edit_address(
@@ -352,9 +353,9 @@ if __name__ == '__main__':
         df_send_name = df_send_name.replace("", np.nan)
         df_send_name = df_send_name.dropna(how='all', axis=0)
 
-        draw_zipcode(pdf, str(row['郵便番号(自宅欄)']))
-        draw_send_address(pdf, send_address)
-        draw_send_name(pdf, df_send_name)
+        nenga_pdf.draw_zipcode(str(row['郵便番号(自宅欄)']))
+        draw_send_address(nenga_pdf.pdf, send_address)
+        draw_send_name(nenga_pdf.pdf, df_send_name)
 
         # 送り元
         owner_info = {
@@ -363,10 +364,10 @@ if __name__ == '__main__':
             "names": df_names_owner
         }
 
-        drow_owner_info(pdf, owner_info)
+        drow_owner_info(nenga_pdf.pdf, owner_info)
 
         # 改ページ
-        pdf.showPage()
+        nenga_pdf.pdf.showPage()
 
     # PDF保存
-    pdf.save()
+    nenga_pdf.pdf.save()
