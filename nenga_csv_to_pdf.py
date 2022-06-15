@@ -56,8 +56,6 @@ class NengaPdf:
             x = 4.6 * cm + width_char * i
             y = 13 * cm
             pdf.drawString(x, y, c)
-            
-n001 = NengaPdf()
 
 
 def draw_zipcode_owner(pdf: canvas.Canvas, zipcode):
