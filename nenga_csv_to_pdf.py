@@ -318,7 +318,7 @@ if __name__ == '__main__':
     for i, row in df_send.iterrows():
         # 年賀状レイアウト出力
         if args.layout:
-            draw_image(nenga_pdf)
+            draw_image(nenga_pdf.pdf)
 
         # 送り先住所
         send_address = edit_address(
